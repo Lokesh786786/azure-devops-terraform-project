@@ -13,8 +13,15 @@ steps:
         exit 1
     }
 
-    & $terraform init
-  displayName: 'Terraform Init'
+- task: AzureCLI@2
+  displayName: 'Azure Login and Terraform Init'
+  inputs:
+    azureSubscription: 'sc-azure-terraform'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az account show
+      terraform init
 
 - powershell: |
     & "C:\Tools\Terraform\terraform.exe" validate
