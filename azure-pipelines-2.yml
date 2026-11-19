@@ -1,32 +1,39 @@
+
 trigger:
-- main
+  - main
 
 pool:
-  name: Local-Windows-Agent
+  name: 'local-windows-Agent'  # Replace with your Agent Pool name
 
 steps:
-- powershell: |
-    $terraform = "C:\Terraform\terraform.exe"
+  - checkout: self
 
-    if (!(Test-Path $terraform)) {
-        Write-Error "Terraform not found at $terraform"
-        exit 1
-    }
+  - task: AzureCLI@2
+    displayName: 'Azure Login'
+    inputs:
+      azureSubscription: 'sc-azure-terraform'
+      scriptType: 'ps'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az account show
 
-- task: AzureCLI@2
-  displayName: 'Azure Login and Terraform Init'
-  inputs:
-    azureSubscription: 'sc-azure-terraform'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az account show
-      terraform init
+  - task: PowerShell@2
+    displayName: 'Terraform Init'
+    inputs:
+      targetType: 'inline'
+      script: |
+        terraform init
 
-- powershell: |
-    & "C:\Tools\Terraform\terraform.exe" validate
-  displayName: 'Terraform Validate'
+  - task: PowerShell@2
+    displayName: 'Terraform Validate'
+    inputs:
+      targetType: 'inline'
+      script: |
+        terraform validate
 
-- powershell: |
-    & "C:\Tools\Terraform\terraform.exe" plan
-  displayName: 'Terraform Plan'
+  - task: PowerShell@2
+    displayName: 'Terraform Plan'
+    inputs:
+      targetType: 'inline'
+      script: |
+        terraform plan
