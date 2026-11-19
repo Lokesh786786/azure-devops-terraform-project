@@ -1,0 +1,25 @@
+trigger:
+- main
+
+pool:
+  name: Local-Windows-Agent
+
+steps:
+- powershell: |
+    $terraform = "C:\Terraform\terraform.exe"
+
+    if (!(Test-Path $terraform)) {
+        Write-Error "Terraform not found at $terraform"
+        exit 1
+    }
+
+    & $terraform init
+  displayName: 'Terraform Init'
+
+- powershell: |
+    & "C:\Tools\Terraform\terraform.exe" validate
+  displayName: 'Terraform Validate'
+
+- powershell: |
+    & "C:\Tools\Terraform\terraform.exe" plan
+  displayName: 'Terraform Plan'
