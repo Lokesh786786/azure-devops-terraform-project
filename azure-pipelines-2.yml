@@ -1,0 +1,65 @@
+
+trigger:
+  - main
+
+pool:
+  name: 'local-windows-Agent'
+
+steps:
+  - checkout: self
+
+  - task: AzureCLI@2
+    displayName: 'Azure Login + Terraform Init Validate Plan'
+    inputs:
+      azureSubscription: 'sc-azure-terraform'
+      scriptType: 'ps'
+      scriptLocation: 'inlineScript'
+      workingDirectory: '$(Build.SourcesDirectory)'
+      inlineScript: |
+
+        Write-Host "========== STEP 1: AZURE LOGIN =========="
+
+        az account show
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Azure Login Failed"
+        }
+
+        Write-Host "========== STEP 2: TERRAFORM VERSION =========="
+
+        & "C:\Terraform\terraform.exe" -version
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Terraform not found"
+        }
+        Write-Host "========== GET AZURE SUBSCRIPTION ID =========="
+
+        $env:TF_VAR_subscription_id = az account show --query id -o tsv
+
+        Write-Host "Subscription ID configured"
+
+        Write-Host "========== STEP 3: TERRAFORM INIT =========="
+
+        & "C:\Terraform\terraform.exe" init
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Terraform Init Failed"
+        }
+
+        Write-Host "========== STEP 4: TERRAFORM VALIDATE =========="
+
+        & "C:\Terraform\terraform.exe" validate
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Terraform Validate Failed"
+        }
+
+        Write-Host "========== STEP 5: TERRAFORM PLAN =========="
+
+        & "C:\Terraform\terraform.exe" plan
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Terraform Plan Failed"
+        }
+
+        Write-Host "========== PIPELINE SUCCESS =========="
