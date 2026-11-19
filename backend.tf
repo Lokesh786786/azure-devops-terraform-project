@@ -5,5 +5,6 @@ terraform {
     storage_account_name = "storagelokesh786"
     container_name       = "tfstate"
     key                  = "devops-project.tfstate"
+    use_cli              = true
   }
 }
