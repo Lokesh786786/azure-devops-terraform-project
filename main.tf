@@ -5,7 +5,7 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 # Create Azure Virtual Network
-#dfasjflksdjf
+
 resource "azurerm_virtual_network" "vnet" {
   name                = var.vnet_name
   location            = azurerm_resource_group.rg.location
