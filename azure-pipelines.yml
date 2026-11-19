@@ -1,19 +1,37 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
+# Azure DevOps pipeline - Windows self-hosted agent
 trigger:
-- main
+  branches:
+    include:
+      - main
 
 pool:
-  vmImage: ubuntu-latest
+  name: Local-Windows-Agent
+
+variables:
+  TF_ROOT: '$(Build.SourcesDirectory)'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - checkout: self
+    displayName: 'Checkout GitHub repository'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - powershell: |
+      Write-Host "Running on Windows self-hosted agent"
+      Write-Host "Computer: $env:COMPUTERNAME"
+      terraform version
+    workingDirectory: '$(TF_ROOT)'
+    displayName: 'Check Windows agent and Terraform'
+
+  - powershell: |
+      terraform fmt -check -recursive
+    workingDirectory: '$(TF_ROOT)'
+    displayName: 'Terraform format check'
+
+  - powershell: |
+      terraform init -backend=false
+    workingDirectory: '$(TF_ROOT)'
+    displayName: 'Terraform init (validation only)'
+
+  - powershell: |
+      terraform validate
+    workingDirectory: '$(TF_ROOT)'
+    displayName: 'Terraform validate'
