@@ -32,6 +32,11 @@ steps:
         if ($LASTEXITCODE -ne 0) {
             throw "Terraform not found"
         }
+        Write-Host "========== GET AZURE SUBSCRIPTION ID =========="
+
+        $env:TF_VAR_subscription_id = az account show --query id -o tsv
+
+        Write-Host "Subscription ID configured"
 
         Write-Host "========== STEP 3: TERRAFORM INIT =========="
 
