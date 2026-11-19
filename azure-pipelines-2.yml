@@ -3,7 +3,7 @@ trigger:
   - main
 
 pool:
-  name: 'local-windows-Agent'  # Replace with your Agent Pool name
+  name: 'local-windows-Agent'
 
 steps:
   - checkout: self
@@ -22,18 +22,18 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        terraform init
+        & "C:\Terraform\terraform.exe" init
 
   - task: PowerShell@2
     displayName: 'Terraform Validate'
     inputs:
       targetType: 'inline'
       script: |
-        terraform validate
+        & "C:\Terraform\terraform.exe" validate
 
   - task: PowerShell@2
     displayName: 'Terraform Plan'
     inputs:
       targetType: 'inline'
       script: |
-        terraform plan
+        & "C:\Terraform\terraform.exe" plan
