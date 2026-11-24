@@ -6,4 +6,4 @@ Azure DevOps and configured Azure authentication using a Service Connection. I u
 Agent Pool to execute Terraform commands. Finally, I designed a CI/CD workflow with 
 Terraform Init, Validate, Plan, Manual Approval and Apply stages to automate Azure 
 infrastructure provisioning. I also configured Azure Blob Storage as a remote Terraform 
-state backend."
+state backend. Adding few more line today"
